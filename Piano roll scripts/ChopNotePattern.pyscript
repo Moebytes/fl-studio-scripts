@@ -1,0 +1,26 @@
+from flpianoroll import *
+
+selected_notes = [i for i in range(score.noteCount) if score.getNote(i).selected]
+if not selected_notes:
+    selected_notes = list(range(score.noteCount))
+
+note_dict = {}
+for i in selected_notes:
+    note = score.getNote(i)
+    note.selected = False
+
+    if note.time not in note_dict:
+        note_dict[note.time] = []
+
+    note_dict[note.time].append(note)
+
+keep_notes = set()
+for notes in note_dict.values():
+    note = max(notes, key=lambda note: note.number)
+    note.number = 60
+    keep_notes.add(note)
+
+for i in reversed(selected_notes):
+    note = score.getNote(i)
+    if note not in keep_notes:
+        score.deleteNote(i)
